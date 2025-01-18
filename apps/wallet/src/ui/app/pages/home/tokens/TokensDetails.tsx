@@ -112,14 +112,17 @@ export function TokenRow({
 		type: coinBalance.coinType,
 	});
 
-	const balanceInUsd = useBalanceInUSD(coinBalance.coinType, coinBalance.totalBalance);
+	const balanceInUsd = useBalanceInUSD(coinBalance.coinType, coinBalance.totalBalance, true);
+	console.log('balanceInUsd: ', balanceInUsd);
+
+	const priceChange = usePriceHistory(coinBalance.coinType, balanceInUsd?.split('_')[0] || null);
 
 	const coinMetadataOverrides = useCoinMetadataOverrides();
 	return (
 		<Tag
 			className={clsx(
 				'group flex py-3 pl-1.5 pr-2 rounded hover:bg-sui/10 items-center bg-transparent border-transparent',
-				onClick && 'hover:cursor-pointer',
+				onClick && 'hover:cursor-pointer w-full',
 			)}
 			onClick={onClick}
 		>
@@ -181,23 +184,68 @@ export function TokenRow({
 			</div>
 
 			<div className="ml-auto flex flex-col items-end gap-1">
-				{balance > 0n && (
-					<Text variant="body" color="gray-90" weight="medium" className="text-end">
-						{formatted} {symbol}
-					</Text>
-				)}
-
-				{balanceInUsd && balanceInUsd > 0 ? (
-					<Text variant="subtitle" color="steel-dark" weight="medium">
-						{Number(balanceInUsd).toLocaleString('en', {
+				{balanceInUsd && Number(balanceInUsd.split('_')[0]) > 0 ? (
+					<Text
+						variant="subtitle"
+						// color="steel-dark"
+						// color={
+						// 	priceChange === 'up' ? 'success' : priceChange === 'down' ? 'error' : 'steel-dark'
+						// }
+						className={clsx(
+							priceChange === 'up'
+								? 'text-success-dark'
+								: priceChange === 'down'
+									? 'text-issue-dark'
+									: 'text-success-dark',
+						)}
+						weight="medium"
+					>
+						{`$${balanceInUsd.split('_')[1]}`}
+						{/* {priceChange && `${priceChange === 'up' ? '⬆️' : '⬇️'}`} */}
+						{/* {Number().toLocaleString('en', {
 							style: 'currency',
 							currency: 'USD',
-						})}
+						})} */}
 					</Text>
 				) : null}
+				<span className="flex flex-row items-center gap-1">
+					{balance > 0n && (
+						<Text variant="subtitle" color="gray-90" weight="medium" className="text-end">
+							{`${
+								balanceInUsd &&
+								Number(balanceInUsd.split('_')[0]).toLocaleString('en', {
+									style: 'currency',
+									currency: 'USD',
+								})
+							}`}
+						</Text>
+					)}
+
+					{balanceInUsd && Number(balanceInUsd.split('_')[0]) > 0 ? (
+						<Text variant="subtitle" color="steel-dark" weight="medium">
+							{` ${formatted}`}
+						</Text>
+					) : null}
+				</span>
 			</div>
 		</Tag>
 	);
+}
+
+function usePriceHistory(coinType: string, currentPrice: string | null) {
+	const [priceHistory, setPriceHistory] = useState<Record<string, string>>({});
+	const [priceChange, setPriceChange] = useState<'up' | 'down' | null>(null);
+
+	useEffect(() => {
+		if (currentPrice && priceHistory[coinType] !== currentPrice) {
+			if (priceHistory[coinType]) {
+				setPriceChange(Number(currentPrice) > Number(priceHistory[coinType]) ? 'up' : 'down');
+			}
+			setPriceHistory((prev) => ({ ...prev, [coinType]: currentPrice }));
+		}
+	}, [coinType, currentPrice]);
+
+	return priceChange;
 }
 
 export function MyTokens({
@@ -215,6 +263,7 @@ export function MyTokens({
 	const [_, { pinCoinType, unpinCoinType }] = usePinnedCoinTypes();
 
 	const { recognized, pinned, unrecognized } = useSortedCoinsByCategories(coinBalances);
+	console.log('recognizedrecognizedrecognized: ', recognized);
 
 	// Avoid perpetual loading state when fetching and retry keeps failing; add isFetched check.
 	const isFirstTimeLoading = isLoading && !isFetched;
@@ -225,7 +274,14 @@ export function MyTokens({
 				<TokenList title="My Coins" defaultOpen>
 					{recognized.map((coinBalance) =>
 						isDefiWalletEnabled ? (
-							<TokenRow renderActions key={coinBalance.coinType} coinBalance={coinBalance} />
+							<TokenRow
+								onClick={() => {
+									window.open(`https://dexscreener.com/sui/${coinBalance.coinType}`, '_blank');
+								}}
+								renderActions
+								key={coinBalance.coinType}
+								coinBalance={coinBalance}
+							/>
 						) : (
 							<TokenLink key={coinBalance.coinType} coinBalance={coinBalance} />
 						),
@@ -422,6 +478,15 @@ function TokenDetails({ coinType }: TokenDetailsProps) {
 					<BuyNLargeHomePanel />
 					<UsdcPromoBanner />
 
+					{activeAccount.isLocked ? (
+						<UnlockAccountButton account={activeAccount} />
+					) : (
+						<MyTokens
+							coinBalances={coinBalances ?? []}
+							isLoading={coinBalancesLoading}
+							isFetched={coinBalancesFetched}
+						/>
+					)}
 					<div className="flex flex-col w-full">
 						<PortfolioName
 							name={activeAccount.nickname ?? domainName ?? formatAddress(activeAccountAddress)}
@@ -534,15 +599,6 @@ function TokenDetails({ coinType }: TokenDetailsProps) {
 							</>
 						)}
 					</div>
-					{activeAccount.isLocked ? (
-						<UnlockAccountButton account={activeAccount} />
-					) : (
-						<MyTokens
-							coinBalances={coinBalances ?? []}
-							isLoading={coinBalancesLoading}
-							isFetched={coinBalancesFetched}
-						/>
-					)}
 				</div>
 			</Loading>
 		</>

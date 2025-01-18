@@ -6,9 +6,12 @@
 	"background": {
 		"service_worker": "background.js"
 	},
-	"permissions": ["storage", "tabs", "alarms", "unlimitedStorage", "identity"],
+	"permissions": ["storage", "tabs", "alarms", "unlimitedStorage", "identity", "sidePanel"],
 	"action": {
-		"default_popup": "ui.html?type=popup"
+		"default_title": "Click to open panel"
+	},
+	"side_panel": {
+		"default_path": "sidepanel.html"
 	},
 	"host_permissions": [
 		"http://127.0.0.1:5001/",

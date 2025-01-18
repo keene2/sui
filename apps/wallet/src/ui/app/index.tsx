@@ -56,6 +56,7 @@ import { SelectQredoAccountsPage } from './pages/qredo-connect/SelectQredoAccoun
 import { RestrictedPage } from './pages/restricted';
 import SiteConnectPage from './pages/site-connect';
 import { StorageMigrationPage } from './pages/StorageMigrationPage';
+import { BluefinTrading } from './pages/trading/BluefinTrading';
 import { AppType } from './redux/slices/app/AppType';
 import { PageMainLayout } from './shared/page-main-layout/PageMainLayout';
 import { Staking } from './staking/home';
@@ -217,6 +218,7 @@ const App = () => {
 				<Route path="connect/:requestID" element={<SiteConnectPage />} />
 				<Route path="approve/:requestID" element={<ApprovalRequestPage />} />
 			</Route>
+			<Route path="/trade" element={<BluefinTrading />} />
 		</Routes>
 	);
 };

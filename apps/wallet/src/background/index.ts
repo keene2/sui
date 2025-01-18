@@ -23,6 +23,11 @@ growthbook.loadFeatures().catch(() => {
 });
 initSentry();
 
+// // // Allows users to open the side panel by clicking on the action toolbar icon
+// global?.chrome?.sidePanel
+// 	.setPanelBehavior({ openPanelOnActionClick: false }) // 设置为 false，这样点击图标时会打开 popup
+// 	.catch((error) => console.error(error));
+
 Browser.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
 	// Skip automatically opening the onboarding in end-to-end tests.
 	if (navigator.userAgent === 'Playwright') {

@@ -63,6 +63,9 @@ function renderApp() {
 function AppWrapper() {
 	const network = useAppSelector(({ app: { apiEnv, customRPC } }) => `${apiEnv}_${customRPC}`);
 	const isFullscreen = useAppSelector((state) => state.app.appType === AppType.fullscreen);
+	const isSidePanel = useAppSelector((state) => state.app.appType === AppType.sidepanel);
+	console.log('isSidePanelisSidePanelisSidePanel', isSidePanel);
+
 	return (
 		<GrowthBookProvider growthbook={growthbook}>
 			<HashRouter>
@@ -90,9 +93,16 @@ function AppWrapper() {
 										<UnlockAccountProvider>
 											<div
 												className={cn(
-													'relative flex flex-col flex-nowrap items-center justify-center w-popup-width min-h-popup-minimum max-h-popup-height h-screen overflow-hidden',
-													isFullscreen && 'shadow-lg rounded-xl',
+													'relative flex flex-col flex-nowrap items-center justify-center',
+													'overflow-hidden',
+													isSidePanel
+														? 'h-sidepanel min-h-sidepanel max-h-sidepanel w-full'
+														: 'min-h-popup-minimum max-h-popup-height h-popup-height w-popup-width',
 												)}
+												// className={cn(
+												// 	'relative flex flex-col flex-nowrap items-center justify-center w-popup-width min-h-popup-minimum max-h-popup-height h-screen overflow-hidden',
+												// 	isFullscreen && 'shadow-lg rounded-xl',
+												// )}
 											>
 												<ErrorBoundary>
 													<App />

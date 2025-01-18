@@ -30,6 +30,7 @@ export default {
 				8: '2rem',
 				15: '3.75rem',
 				'popup-minimum': '600px',
+				sidepanel: '100vh', // 新增
 			},
 			spacing: {
 				7.5: '1.875rem',
@@ -38,6 +39,7 @@ export default {
 				'popup-height': '680px',
 				'popup-width': '360px',
 				'nav-height': '80px',
+				'sidepanel-height': '100vh', // 新增
 			},
 			boxShadow: {
 				'wallet-content': '0px -5px 20px 5px rgba(160, 182, 195, 0.15)',
@@ -58,10 +60,15 @@ export default {
 			},
 			height: {
 				header: '4.25rem',
+				sidepanel: '100vh', // 新增
 			},
 			maxWidth: {
 				'popup-width': '360px',
 				'token-width': '80px',
+			},
+			maxHeight: {
+				'popup-height': '680px', // 新增
+				sidepanel: '100vh', // 新增
 			},
 			dropShadow: {
 				accountModal: ['0px 10px 30px rgba(0, 0, 0, 0.15)', '0px 10px 50px rgba(0, 0, 0, 0.15)'],

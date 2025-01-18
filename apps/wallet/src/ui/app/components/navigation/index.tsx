@@ -48,6 +48,19 @@ export function Navigation() {
 					<span className={st.title}>Assets</span>
 				</NavLink>
 				<NavLink
+					to="./trade"
+					className={makeLinkCls}
+					title="Trade"
+					onClick={(e) => {
+						if (activeAccount?.isLocked) {
+							e.preventDefault();
+						}
+					}}
+				>
+					<Nft132 className="w-8 h-8" />
+					<span className={st.title}>Trade</span>
+				</NavLink>
+				<NavLink
 					to="./apps"
 					className={makeLinkCls}
 					title="Apps"

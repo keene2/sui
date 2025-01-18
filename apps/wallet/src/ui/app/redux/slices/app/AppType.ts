@@ -5,10 +5,14 @@ export enum AppType {
 	unknown,
 	fullscreen,
 	popup,
+	sidepanel,
 }
 
 export function getFromLocationSearch(search: string) {
-	if (/type=popup/.test(window.location.search)) {
+	const pathname = window.location.pathname;
+	if (pathname.includes('sidepanel.html')) {
+		return AppType.sidepanel;
+	} else if (pathname.includes('ui.html')) {
 		return AppType.popup;
 	}
 	return AppType.fullscreen;

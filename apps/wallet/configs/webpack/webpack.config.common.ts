@@ -171,6 +171,15 @@ const commonConfig: () => Promise<Configuration> = async () => {
 				template: resolve(SRC_ROOT, 'ui', 'index.template.html'),
 				title: APP_NAME,
 			}),
+			new HtmlWebpackPlugin({
+				chunks: ['ui'],
+				filename: 'sidepanel.html',
+				template: resolve(SRC_ROOT, 'ui', 'index.template.html'),
+				title: `${APP_NAME} - Sidepanel`,
+				templateParameters: {
+					type: 'sidepanel', // 添加这个参数
+				},
+			}),
 			new CopyPlugin({
 				patterns: [
 					{
